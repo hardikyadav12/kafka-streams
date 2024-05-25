@@ -4,6 +4,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
 
 public class GreetingTopology {
@@ -16,7 +17,11 @@ public class GreetingTopology {
 
         var greetingsStream = streamsBuilder.stream(GREETINGS, Consumed.with(Serdes.String(), Serdes.String()));
 
+        greetingsStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
+
         var modifiedStream = greetingsStream.mapValues((readOnlyKey, value) -> value.toUpperCase());
+
+        modifiedStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
 
         modifiedStream.to(GREETINGS_UPPERCASE, Produced.with(Serdes.String(), Serdes.String()));
 

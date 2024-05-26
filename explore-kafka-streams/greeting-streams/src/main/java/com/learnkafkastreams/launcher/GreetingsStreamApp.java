@@ -7,6 +7,7 @@ import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.errors.TopicExistsException;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 
@@ -25,6 +26,8 @@ public class GreetingsStreamApp {
         properties.put(StreamsConfig.APPLICATION_ID_CONFIG, "greetings-app");
         properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
+        properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
 
         createTopics(properties, List.of(GreetingTopology.GREETINGS, GreetingTopology.GREETINGS_UPPERCASE, GreetingTopology.GREETINGS_SPANISH));
         var greetingsTopology = GreetingTopology.builTopology();

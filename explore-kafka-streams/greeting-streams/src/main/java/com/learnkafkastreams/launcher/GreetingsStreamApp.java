@@ -26,7 +26,7 @@ public class GreetingsStreamApp {
         properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
-        createTopics(properties, List.of(GreetingTopology.GREETINGS, GreetingTopology.GREETINGS_UPPERCASE));
+        createTopics(properties, List.of(GreetingTopology.GREETINGS, GreetingTopology.GREETINGS_UPPERCASE, GreetingTopology.GREETINGS_SPANISH));
         var greetingsTopology = GreetingTopology.builTopology();
         var kafkaStreams = new KafkaStreams(greetingsTopology, properties);
 

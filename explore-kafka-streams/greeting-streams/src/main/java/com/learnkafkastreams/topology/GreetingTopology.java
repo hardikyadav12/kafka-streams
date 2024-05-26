@@ -7,6 +7,8 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.kstream.Produced;
 
+import java.util.Arrays;
+
 public class GreetingTopology {
 
     private GreetingTopology() {
@@ -15,16 +17,22 @@ public class GreetingTopology {
 
     public static final String GREETINGS = "greetings";
     public static final String  GREETINGS_UPPERCASE = "greetings_uppercase";
+    public static final String  GREETINGS_SPANISH = "greetings_spanish";
 
     public static Topology builTopology() {
         StreamsBuilder streamsBuilder = new StreamsBuilder();
 
         var greetingsStream = streamsBuilder.stream(GREETINGS, Consumed.with(Serdes.String(), Serdes.String()));
 
-        greetingsStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
+        var greetingsSpanishStream = streamsBuilder.stream(GREETINGS_SPANISH, Consumed.with(Serdes.String(), Serdes.String()));
 
-        var modifiedStream = greetingsStream.filter((key,value) -> value.length()>5)
-                                            .mapValues((readOnlyKey, value) -> value.toUpperCase());
+        var mergedStream = greetingsStream.merge(greetingsSpanishStream);
+
+        mergedStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
+
+        var modifiedStream = mergedStream.
+//                .flatMapValues((readOnlykey, value) -> Arrays.asList(value.split("")));
+        mapValues((readOnlyKey, value) -> value.toUpperCase());
 
         modifiedStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
 

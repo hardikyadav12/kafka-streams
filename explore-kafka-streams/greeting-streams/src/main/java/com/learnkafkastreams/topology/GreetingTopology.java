@@ -9,8 +9,12 @@ import org.apache.kafka.streams.kstream.Produced;
 
 public class GreetingTopology {
 
-    public static  String GREETINGS = "greetings";
-    public static  String  GREETINGS_UPPERCASE = "greetings_uppercase";
+    private GreetingTopology() {
+        throw new IllegalStateException("Utility Class");
+    }
+
+    public static final String GREETINGS = "greetings";
+    public static final String  GREETINGS_UPPERCASE = "greetings_uppercase";
 
     public static Topology builTopology() {
         StreamsBuilder streamsBuilder = new StreamsBuilder();
@@ -19,7 +23,8 @@ public class GreetingTopology {
 
         greetingsStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
 
-        var modifiedStream = greetingsStream.mapValues((readOnlyKey, value) -> value.toUpperCase());
+        var modifiedStream = greetingsStream.filter((key,value) -> value.length()>5)
+                                            .mapValues((readOnlyKey, value) -> value.toUpperCase());
 
         modifiedStream.print(Printed.<String, String>toSysOut().withLabel("greetingsStream"));
 
